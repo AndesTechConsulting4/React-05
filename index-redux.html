@@ -70,7 +70,7 @@ store.dispatch({type: 'PLUS'});
 store.replaceReducer(reducer0);
 store.dispatch({type:'RESET'});
 store.dispatch({type: 'PLUS', value: 17});
-store.dispatch({type: 'MINUS', value: 12});
+store.dispatch({type: 'MINUS', value: 3});
 
 
 //------------------------------------------------------
@@ -124,7 +124,8 @@ class CounterButton extends React.Component {
     console.log("++click ");
     this.setState(state => ({count: state.count+1}));
     log(this.props);
-    this.props.dispatch({type:this.props.type});
+    //this.props.dispatch({type:this.props.type});
+    this.props.doOps(this.props.type);
   }
 
   render() {
@@ -145,21 +146,23 @@ class CounterButton extends React.Component {
 
 log(ReactRedux);
 
-function mapStateToProps(state) {
+//const NewButton = ReactRedux.connect(,)(Button);
+
+function mapStateToProps(gstate) {
   return {
-    gcounter: state.counter
+    gcounter: gstate.counter
   };
 }
 
-// function mapStateToProps2(state) {
+// function mapStateToProps2(gstate) {
 //   return {
-//     gcounter2: state.counter
+//     gcounter2: gstate.counter
 //   };
 // }
 
 function mapDispatchToProps(dispatch) {
   return {
-    doMinus: () => dispatch({type:"MINUS"})
+    doOps: (whatToDo) => dispatch({type:whatToDo})
   };
 }
 
@@ -170,9 +173,9 @@ var ac2 = {type: 'MINUS'};
 // var Button2 = ReactRedux.connect(mapStateToProps, ac2)(CounterButton);
 // var Button3 = ReactRedux.connect(mapStateToProps, {ac1,ac2})(CounterButton);
 
-var Button1 = ReactRedux.connect(null)(CounterButton);
-var Button2 = ReactRedux.connect(null)(CounterButton);
-var Button3 = ReactRedux.connect(null)(CounterButton);
+var Button1 = ReactRedux.connect(null, mapDispatchToProps)(CounterButton);
+// var Button2 = ReactRedux.connect(null)(CounterButton);
+// var Button3 = ReactRedux.connect(null)(CounterButton);
 var Global =  ReactRedux.connect(mapStateToProps)(GlobalCounterP);
 
 //var Button3 = ReactRedux.connect(mapStateToProps,mapDispatchToProps)(CounterButton);
@@ -183,17 +186,40 @@ const Provider = ReactRedux.Provider;
 // setInterval(() => { store.dispatch({type:'PLUS'});
 // }, 5000);
 
-
+//
+ // <Provider store={store}>
+ // </Provider>
 
 ReactDOM.render(
-  <Provider store={store}>
-   
+
+ 
+  <div>  
+  <Provider store={store}>  
   <Button1 color="red" type = 'RESET'/>
-  <Button2 color="green" type='MINUS'/>
-  <Button3 color="blue" type='PLUS'/>
+  <Button1 color="green" type='MINUS'/>
+  <Button1 color="blue" type='PLUS'/>
   <Global/>
-  </Provider>
+ </Provider>
+  </div>
   ,document.getElementById('react2'));
+
+
+ const Button2 = () =>
+ {
+   let [c,setC] = React.useState(0);
+
+  React.useEffect(() => {
+    console.log("effect:", c);
+  }); 
+
+  
+  return <div>
+     <button onClick={()=> setC(c+1)}> Count {c} </button>
+    </div>;
+ }
+ 
+ ReactDOM.render( <Button2/>, document.getElementById('react3'))
+
 
 
 </script>

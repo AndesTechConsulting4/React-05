@@ -1,0 +1,203 @@
+<!DOCTYPE html>
+<html lang="ru">
+
+<head>
+    <title> 1st React App </title>
+    <meta charset="utf-8">
+    <script crossorigin src="https://unpkg.com/react@16/umd/react.development.js"></script>
+    <script crossorigin src="https://unpkg.com/react-dom@16/umd/react-dom.development.js"></script>
+    <script crossorigin src="https://cdnjs.cloudflare.com/ajax/libs/babel-standalone/6.26.0/babel.js"> </script>
+    <script crossorigin src="https://cdnjs.cloudflare.com/ajax/libs/redux/4.0.1/redux.js" ></script>
+    <script crossorigin src="https://cdnjs.cloudflare.com/ajax/libs/react-redux/6.0.1/react-redux.js" ></script>
+  
+  </head>
+
+<body>
+
+    <div id="react1"> </div>
+    <div id="react2"> </div>
+    <div id="react3"> </div>
+
+ 
+<script>
+'use strict'
+
+const  log = console.log;
+
+const reducer1 = (state, action) => { log('reducer1'); return {...state, counter: 
+  (action.type==='PLUS')?state.counter+1:state.counter-1}; };
+
+const reducer5= (state, action) => { log('reducer5'); return {...state, counter: state.counter+5}; };
+
+
+const reducer0 = (state, action) => { log('reducer0');
+let dN =1; 
+if( typeof(action.value) === 'number') dN = action.value;
+
+switch(action.type)
+{
+  case 'PLUS': 
+    return {...state, counter: state.counter+dN};
+  case 'RESET': 
+    return {...state, counter:0};
+  case 'MINUS': 
+    return {...state, counter: state.counter-dN}; 
+
+  default: return state;
+}
+
+};
+
+const init_state = {counter: 0, c1:0, c2:0};
+//const init_state = {counter: -1};
+
+const action1 = {type: 'PLUS'};
+
+const store = Redux.createStore(reducer1, init_state);
+
+store.subscribe( () => {log('store: ', store.getState() ); });
+//log("state: ", store.getState());
+
+store.dispatch({type: 'PLUS'});
+store.dispatch({type: 'PLUS'});
+store.dispatch({type: 'PLUS'});
+store.dispatch({type: 'PLUS'});
+store.dispatch({type: 'PLUS'});
+
+
+//-----------------------------------------------------
+
+store.replaceReducer(reducer0);
+store.dispatch({type:'RESET'});
+store.dispatch({type: 'PLUS', value: 17});
+store.dispatch({type: 'MINUS', value: 12});
+
+
+//------------------------------------------------------
+// log('++++++++++++++++++++++++++++++++++++++++++++++++++++++++');
+
+// const reducerC1 = (cc1, action) => { log('reducer_C1'); return {...cc1, x: cc1.x + 1}; };
+
+// const reducerC2 = (cc1, action) => { log('reducer_C2'); return {...cc1, y: cc1.y + 1}; };
+   
+
+// const reducer50 = Redux.combineReducers({reducerC1, reducerC2});
+
+
+// const store2 = Redux.createStore(reducer50, {x:1, y:2});
+
+
+//store.replaceReducer(reducer50);
+//log(store.getState());
+// store2.dispatch({type: 'PLUS', value: 17});
+
+//-----------------------------------------------------
+
+</script>
+
+<script type="text/babel">
+'use strict'
+
+class GlobalCounterP extends React.Component
+{
+  render(){
+  return (<div>
+          <h3> Global Counter {this.props.gcounter} </h3>
+         </div>);
+  }
+}
+
+class CounterButton extends React.Component {
+  state = {count:1};
+
+  shouldComponentUpdate(nextProps, nextState) {
+    if (this.props.color !== nextProps.color) {
+      return false;
+    }
+    if (this.state.count !== nextState.count) {
+      return true;
+    }
+    return false;
+  }
+
+  click=()=>{
+    console.log("++click ");
+    this.setState(state => ({count: state.count+1}));
+    log(this.props);
+    this.props.dispatch({type:this.props.type});
+  }
+
+  render() {
+    // console.log("+++ render: ", this);
+      
+    return (
+      <div>
+        <button
+        style={{color:this.props.color}}
+        onClick={this.click}>
+        Счётчик: {this.state.count}, {this.props.type}
+      </button></div>
+    );
+  }
+}
+
+// react redux --------------------------------------------------------------
+
+log(ReactRedux);
+
+function mapStateToProps(state) {
+  return {
+    gcounter: state.counter
+  };
+}
+
+// function mapStateToProps2(state) {
+//   return {
+//     gcounter2: state.counter
+//   };
+// }
+
+function mapDispatchToProps(dispatch) {
+  return {
+    doMinus: () => dispatch({type:"MINUS"})
+  };
+}
+
+var ac1 = {type: 'PLUS'};
+var ac2 = {type: 'MINUS'};
+
+// var Button1 = ReactRedux.connect(mapStateToProps, {ac1,ac2})(CounterButton);
+// var Button2 = ReactRedux.connect(mapStateToProps, ac2)(CounterButton);
+// var Button3 = ReactRedux.connect(mapStateToProps, {ac1,ac2})(CounterButton);
+
+var Button1 = ReactRedux.connect(null)(CounterButton);
+var Button2 = ReactRedux.connect(null)(CounterButton);
+var Button3 = ReactRedux.connect(null)(CounterButton);
+var Global =  ReactRedux.connect(mapStateToProps)(GlobalCounterP);
+
+//var Button3 = ReactRedux.connect(mapStateToProps,mapDispatchToProps)(CounterButton);
+
+
+const Provider = ReactRedux.Provider;
+
+// setInterval(() => { store.dispatch({type:'PLUS'});
+// }, 5000);
+
+
+
+ReactDOM.render(
+  <Provider store={store}>
+   
+  <Button1 color="red" type = 'RESET'/>
+  <Button2 color="green" type='MINUS'/>
+  <Button3 color="blue" type='PLUS'/>
+  <Global/>
+  </Provider>
+  ,document.getElementById('react2'));
+
+
+</script>
+
+</body>
+
+</html>
